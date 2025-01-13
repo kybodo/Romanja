@@ -1,0 +1,2361 @@
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+
+
+
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .main_content {
+            width: 80%;
+            max-width: 1200px;
+            padding: 20px;
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #444;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1.5em;
+            color: #777;
+        }
+
+        #editor {
+            width: 100%;
+            height: 150px;
+            font-size: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #keyboard {
+            display: grid;
+            grid-template-areas: 
+                "row1 row1 row1 row1 row1 row1 row1 row1 row1 row1"
+                "row2 row2 row2 row2 row2 row2 row2 row2 row2"
+                "row3 row3 row3 row3 row3 row3 row3 row3 row3"
+                "row4 row4 row4 row4 row4 row4 row4 row4"
+                "row5 row5 row5 row5 row5 row5 row5";
+            gap: 10px;
+            justify-items: center;
+            padding: 10px;
+        }
+
+        .row1 { grid-area: row1; }
+        .row2 { grid-area: row2; }
+        .row3 { grid-area: row3; }
+        .row4 { grid-area: row4; }
+        .row5 { grid-area: row5; }
+
+        .branah-key {
+            padding: 10px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .branah-key:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .branah-label-reference,
+        .branah-label-natural {
+            display: block;
+        }
+    </style>
+
+
+
+
+
+
+
+    <div class="main_content">
+        <h1>Romanja Keyboard</h1>
+
+
+        <h3>The only korean phonetic keyboard in the world!</h3>
+
+
+
+        <p><textarea id="editor" name="editor" rows="" cols="75" style="font-size: 20px; direction: ltr; width: 1150px; height: 164px;"></textarea></p>
+      
+        <div id="keyboard"><div id="branah-keyboard"><div id="branah-keyboard-alpha"><div class="branah-clear">
+        
+        
+   
+
+        </p></div>
+
+        <script>
+            (function() {
+                var a = {};
+                a.util = {
+                    mobile: /Android|webOS|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                    opera: ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0),
+                    mozilla: (typeof InstallTrigger !== "undefined"),
+                    windowWidth: function() {
+                        var i = window.document.documentElement.clientWidth,
+                            e = window.document.body;
+                        return window.document.compatMode === "CSS1Compat" && i || e && e.clientWidth || i
+                    },
+                    code: function(i) {
+                        if (!i) {
+                            var i = window.event
+                        }
+                        if (i.code != undefined && i.key != undefined) {
+                            return i.code
+                        }
+                        return "Unidentified"
+                    },
+                    keyCode: function(G) {
+                        if (!G) {
+                            var G = window.event
+                        }
+                        var i = G.keyCode;
+                        if (this.mozilla) {
+                            switch (i) {
+                                case 59:
+                                    i = 186;
+                                    break;
+                                case 107:
+                                    i = 187;
+                                    break;
+                                case 109:
+                                    i = 189;
+                                    break;
+                                case 61:
+                                    i = 187;
+                                    break;
+                                case 173:
+                                    i = 189;
+                                    break
+                            }
+                        }
+                        if (this.opera) {
+                            switch (i) {
+                                case 59:
+                                    i = 186;
+                                    break;
+                                case 61:
+                                    i = 187;
+                                    break;
+                                case 109:
+                                    i = 189;
+                                    break
+                            }
+                        }
+                        if (i == 18 && G.location && G.location == 2) {
+                            i = 255
+                        }
+                        return i
+                    },
+                    preventDefault: function(i) {
+                        if (!i) {
+                            var i = window.event
+                        }
+                        i.preventDefault ? i.preventDefault() : (i.returnValue = false)
+                    },
+                    srcId: function(i, G, I) {
+                        if (!i) {
+                            var i = window.event
+                        }
+                        var H;
+                        if (i.target) {
+                            H = i.target
+                        } else {
+                            if (i.srcElement) {
+                                H = i.srcElement
+                            }
+                        }
+                        if (H.nodeType == 3) {
+                            H = target.parentNode
+                        }
+                        while (H.tagName.toLowerCase() != I) {
+                            H = H.parentNode;
+                            if (H == G || H.tagName.toLowerCase() == "body") {
+                                return null
+                            }
+                        }
+                        return H.id
+                    },
+                    insertAtCaret: function(i, J) {
+                        var I = this.getSelectionStart(i);
+                        var G = this.getSelectionEnd(i);
+                        var H = i.value.length;
+                        i.value = i.value.substring(0, I) + J + i.value.substring(G, H);
+                        this.setCaretPosition(i, I + J.length, 0)
+                    },
+                    deleteAtCaret: function(H, G, i) {
+                        var K = this.getSelectionStart(H);
+                        var I = this.getSelectionEnd(H);
+                        var J = H.value.length;
+                        if (G > K) {
+                            G = K
+                        }
+                        if (I + i > J) {
+                            i = J - I
+                        }
+                        var L = H.value.substring(K - G, I + i);
+                        H.value = H.value.substring(0, K - G) + H.value.substring(I + i);
+                        this.setCaretPosition(H, K - G, 0);
+                        return L
+                    },
+                    getSelectionStart: function(i) {
+                        i.focus();
+                        if (i.selectionStart !== undefined) {
+                            return i.selectionStart
+                        } else {
+                            if (document.selection) {
+                                var G = document.selection.createRange();
+                                if (G == null) {
+                                    return 0
+                                }
+                                var I = i.createTextRange();
+                                var H = I.duplicate();
+                                I.moveToBookmark(G.getBookmark());
+                                H.setEndPoint("EndToStart", I);
+                                return H.text.length
+                            }
+                        }
+                        return 0
+                    },
+                    getSelectionEnd: function(i) {
+                        i.focus();
+                        if (i.selectionEnd !== undefined) {
+                            return i.selectionEnd
+                        } else {
+                            if (document.selection) {
+                                var G = document.selection.createRange();
+                                if (G == null) {
+                                    return 0
+                                }
+                                var I = i.createTextRange();
+                                var H = I.duplicate();
+                                I.moveToBookmark(G.getBookmark());
+                                H.setEndPoint("EndToStart", I);
+                                return H.text.length + G.text.length
+                            }
+                        }
+                        return i.value.length
+                    },
+                    setCaretPosition: function(G, I, i) {
+                        var H = G.value.length;
+                        if (I > H) {
+                            I = H
+                        }
+                        if (I + i > H) {
+                            i = H - i
+                        }
+                        G.focus();
+                        if (G.setSelectionRange) {
+                            G.setSelectionRange(I, I + i)
+                        } else {
+                            if (G.createTextRange) {
+                                var J = G.createTextRange();
+                                J.collapse(true);
+                                J.moveEnd("character", I + i);
+                                J.moveStart("character", I);
+                                J.select()
+                            }
+                        }
+                        G.focus()
+                    },
+                    selectAll: function(i) {
+                        this.setCaretPosition(i, 0, i.value.length)
+                    },
+                    fromCharCodeS: function() {
+                        var J = arguments.length;
+                        var K = "";
+                        var e, I, M;
+                        for (var G = 0; G < J; G++) {
+                            M = arguments[G];
+                            if (M < 1114112 && 65535 < M) {
+                                e = Math.floor((M - 65536) / 1024) + 55296;
+                                I = ((M - 65536) % 1024) + 56320;
+                                K = K + String.fromCharCode(e, I)
+                            } else {
+                                if (M < 65536) {
+                                    K = K + String.fromCharCode(M)
+                                }
+                            }
+                        }
+                        return K
+                    }
+                };
+                a.layout = function() {
+                    this.keys = [];
+                    this.deadkeys = [];
+                    this.dir = "ltr";
+                    this.name = "US";
+                    this.lang = "en"
+                };
+                a.layout.prototype.loadDefault = function() {
+                    this.keys = [{
+                        i: "k0",
+                        c: "0",
+                        n: "`",
+                        s: "~"
+                    }, {
+                        i: "k1",
+                        c: "0",
+                        n: "1",
+                        s: "!"
+                    }, {
+                        i: "k2",
+                        c: "0",
+                        n: "2",
+                        s: "@"
+                    }, {
+                        i: "k3",
+                        c: "0",
+                        n: "3",
+                        s: "#"
+                    }, {
+                        i: "k4",
+                        c: "0",
+                        n: "4",
+                        s: "$"
+                    }, {
+                        i: "k5",
+                        c: "0",
+                        n: "5",
+                        s: "%"
+                    }, {
+                        i: "k6",
+                        c: "0",
+                        n: "6",
+                        s: "^"
+                    }, {
+                        i: "k7",
+                        c: "0",
+                        n: "7",
+                        s: "&"
+                    }, {
+                        i: "k8",
+                        c: "0",
+                        n: "8",
+                        s: "*"
+                    }, {
+                        i: "k9",
+                        c: "0",
+                        n: "9",
+                        s: "("
+                    }, {
+                        i: "k10",
+                        c: "0",
+                        n: "0",
+                        s: ")"
+                    }, {
+                        i: "k11",
+                        c: "0",
+                        n: "-",
+                        s: "_"
+                    }, {
+                        i: "k12",
+                        c: "0",
+                        n: "=",
+                        s: "+"
+                    }, {
+                        i: "k13",
+                        c: "1",
+                        n: "q",
+                        s: "Q"
+                    }, {
+                        i: "k14",
+                        c: "1",
+                        n: "w",
+                        s: "W"
+                    }, {
+                        i: "k15",
+                        c: "1",
+                        n: "e",
+                        s: "E"
+                    }, {
+                        i: "k16",
+                        c: "1",
+                        n: "r",
+                        s: "R"
+                    }, {
+                        i: "k17",
+                        c: "1",
+                        n: "t",
+                        s: "T"
+                    }, {
+                        i: "k18",
+                        c: "1",
+                        n: "y",
+                        s: "Y"
+                    }, {
+                        i: "k19",
+                        c: "1",
+                        n: "u",
+                        s: "U"
+                    }, {
+                        i: "k20",
+                        c: "1",
+                        n: "i",
+                        s: "I"
+                    }, {
+                        i: "k21",
+                        c: "1",
+                        n: "o",
+                        s: "O"
+                    }, {
+                        i: "k22",
+                        c: "1",
+                        n: "p",
+                        s: "P"
+                    }, {
+                        i: "k23",
+                        c: "0",
+                        n: "[",
+                        s: "{"
+                    }, {
+                        i: "k24",
+                        c: "0",
+                        n: "]",
+                        s: "}"
+                    }, {
+                        i: "k25",
+                        c: "0",
+                        n: "\\",
+                        s: "|"
+                    }, {
+                        i: "k26",
+                        c: "1",
+                        n: "a",
+                        s: "A"
+                    }, {
+                        i: "k27",
+                        c: "1",
+                        n: "s",
+                        s: "S"
+                    }, {
+                        i: "k28",
+                        c: "1",
+                        n: "d",
+                        s: "D"
+                    }, {
+                        i: "k29",
+                        c: "1",
+                        n: "f",
+                        s: "F"
+                    }, {
+                        i: "k30",
+                        c: "1",
+                        n: "g",
+                        s: "G"
+                    }, {
+                        i: "k31",
+                        c: "1",
+                        n: "h",
+                        s: "H"
+                    }, {
+                        i: "k32",
+                        c: "1",
+                        n: "j",
+                        s: "J"
+                    }, {
+                        i: "k33",
+                        c: "1",
+                        n: "k",
+                        s: "K"
+                    }, {
+                        i: "k34",
+                        c: "1",
+                        n: "l",
+                        s: "L"
+                    }, {
+                        i: "k35",
+                        c: "0",
+                        n: ";",
+                        s: ":"
+                    }, {
+                        i: "k36",
+                        c: "0",
+                        n: "'",
+                        s: '"'
+                    }, {
+                        i: "k37",
+                        c: "1",
+                        n: "z",
+                        s: "Z"
+                    }, {
+                        i: "k38",
+                        c: "1",
+                        n: "x",
+                        s: "X"
+                    }, {
+                        i: "k39",
+                        c: "1",
+                        n: "c",
+                        s: "C"
+                    }, {
+                        i: "k40",
+                        c: "1",
+                        n: "v",
+                        s: "V"
+                    }, {
+                        i: "k41",
+                        c: "1",
+                        n: "b",
+                        s: "B"
+                    }, {
+                        i: "k42",
+                        c: "1",
+                        n: "n",
+                        s: "N"
+                    }, {
+                        i: "k43",
+                        c: "1",
+                        n: "m",
+                        s: "M"
+                    }, {
+                        i: "k44",
+                        c: "0",
+                        n: ",",
+                        s: "<"
+                    }, {
+                        i: "k45",
+                        c: "0",
+                        n: ".",
+                        s: ">"
+                    }, {
+                        i: "k46",
+                        c: "0",
+                        n: "/",
+                        s: "?"
+                    }, {
+                        i: "k47",
+                        c: "0",
+                        n: "\\",
+                        s: "|"
+                    }];
+                    this.deadkeys = [];
+                    this.dir = "ltr";
+                    this.name = "US";
+                    this.lang = "en"
+                };
+                a.layout.prototype.load = function(e) {
+                    this.keys = e.keys;
+                    this.deadkeys = e.deadkeys;
+                    this.dir = e.dir;
+                    this.name = e.name;
+                    this.lang = e.lang ? e.lang : "en"
+                };
+                a.layout.parser = {
+                    keys: {
+                        "192": "Backquote",
+                        "49": "Digit1",
+                        "50": "Digit2",
+                        "51": "Digit3",
+                        "52": "Digit4",
+                        "53": "Digit5",
+                        "54": "Digit6",
+                        "55": "Digit7",
+                        "56": "Digit8",
+                        "57": "Digit9",
+                        "48": "Digit0",
+                        "189": "Minus",
+                        "187": "Equal",
+                        "81": "KeyQ",
+                        "87": "KeyW",
+                        "69": "KeyE",
+                        "82": "KeyR",
+                        "84": "KeyT",
+                        "89": "KeyY",
+                        "85": "KeyU",
+                        "73": "KeyI",
+                        "79": "KeyO",
+                        "80": "KeyP",
+                        "219": "BracketLeft",
+                        "221": "BracketRight",
+                        "220": "Backslash",
+                        "65": "KeyA",
+                        "83": "KeyS",
+                        "68": "KeyD",
+                        "70": "KeyF",
+                        "71": "KeyG",
+                        "72": "KeyH",
+                        "74": "KeyJ",
+                        "75": "KeyK",
+                        "76": "KeyL",
+                        "186": "Semicolon",
+                        "222": "Quote",
+                        "90": "KeyZ",
+                        "88": "KeyX",
+                        "67": "KeyC",
+                        "86": "KeyV",
+                        "66": "KeyB",
+                        "78": "KeyN",
+                        "77": "KeyM",
+                        "188": "Comma",
+                        "190": "Period",
+                        "191": "Slash",
+                        "17": "ControlLeft",
+                        "18": "AltLeft",
+                        "16": "ShiftLeft",
+                        "32": "Space",
+                        "27": "Escape",
+                        "20": "CapsLock",
+                        "13": "Enter",
+                        "255": "AltRight"
+                    },
+                    codes: {
+                        Backquote: 0,
+                        Digit1: 1,
+                        Digit2: 2,
+                        Digit3: 3,
+                        Digit4: 4,
+                        Digit5: 5,
+                        Digit6: 6,
+                        Digit7: 7,
+                        Digit8: 8,
+                        Digit9: 9,
+                        Digit0: 10,
+                        Minus: 11,
+                        Equal: 12,
+                        KeyQ: 13,
+                        KeyW: 14,
+                        KeyE: 15,
+                        KeyR: 16,
+                        KeyT: 17,
+                        KeyY: 18,
+                        KeyU: 19,
+                        KeyI: 20,
+                        KeyO: 21,
+                        KeyP: 22,
+                        BracketLeft: 23,
+                        BracketRight: 24,
+                        Backslash: 25,
+                        KeyA: 26,
+                        KeyS: 27,
+                        KeyD: 28,
+                        KeyF: 29,
+                        KeyG: 30,
+                        KeyH: 31,
+                        KeyJ: 32,
+                        KeyK: 33,
+                        KeyL: 34,
+                        Semicolon: 35,
+                        Quote: 36,
+                        KeyZ: 37,
+                        KeyX: 38,
+                        KeyC: 39,
+                        KeyV: 40,
+                        KeyB: 41,
+                        KeyN: 42,
+                        KeyM: 43,
+                        Comma: 44,
+                        Period: 45,
+                        Slash: 46,
+                        IntlBackslash: 47
+                    },
+                    getKeyLegend: function(H, G) {
+                        var I = H.length;
+                        for (var e = 0; e < I; e++) {
+                            if (H[e].i == G) {
+                                return (H[e].n ? H[e].n : "")
+                            }
+                        }
+                        return 0
+                    },
+                    getKey: function(H, G) {
+                        var I = H.length;
+                        for (var e = 0; e < I; e++) {
+                            if (H[e].i == G) {
+                                return H[e]
+                            }
+                        }
+                        return null
+                    },
+                    isDeadkey: function(e, I) {
+                        if (!e) {
+                            return false
+                        }
+                        var H = e.length;
+                        for (var G = 0; G < H; G++) {
+                            if (e[G].k == I) {
+                                return true
+                            }
+                        }
+                        return false
+                    },
+                    getMappedValue: function(e, J, I) {
+                        if (!e) {
+                            return ""
+                        }
+                        var H = e.length;
+                        for (var G = 0; G < H; G++) {
+                            if (e[G].k == I && e[G].b == J) {
+                                return e[G].c
+                            }
+                        }
+                        return ""
+                    },
+                    getState: function(I, e, J, G, H, i) {
+                        var K = "n";
+                        if (!e && !J && I) {
+                            K = "n"
+                        } else {
+                            if (!e && J && !I) {
+                                K = "s"
+                            } else {
+                                if (!e && J && I) {
+                                    K = "s"
+                                } else {
+                                    if (e && !J && !I) {
+                                        K = "n"
+                                    } else {
+                                        if (e && !J && I) {
+                                            K = "t"
+                                        } else {
+                                            if (e && J && !I) {
+                                                K = "s"
+                                            } else {
+                                                if (e && J && I) {
+                                                    K = "f"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (G) {
+                            if (H == "1") {
+                                if (K == "n") {
+                                    K = "s"
+                                } else {
+                                    if (K == "s") {
+                                        K = "n"
+                                    }
+                                }
+                            } else {
+                                if (H == "SGCap") {
+                                    if (K == "n") {
+                                        K = "y"
+                                    } else {
+                                        if (K == "s") {
+                                            K = "z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (i) {
+                            if (K == "n") {
+                                K = "t"
+                            } else {
+                                if (K == "s") {
+                                    K = "f"
+                                }
+                            }
+                        }
+                        return K
+                    }
+                };
+                a.keyboard = function(e, I) {
+                    this.defaultLayout = new a.layout();
+                    this.defaultLayout.loadDefault();
+                    this.virtualLayout = new a.layout();
+                    this.virtualLayout.loadDefault();
+                    this.currentLayout = this.virtualLayout;
+                    this.shift = false;
+                    this.shiftOn = false;
+                    this.caps = false;
+                    this.capsOn = false;
+                    this.alt = false;
+                    this.altGr = false;
+                    this.altGrOn = false;
+                    this.ctrl = false;
+                    this.altCtrlOn = false;
+                    this.fontSize = 18;
+                    this.counter = 0;
+                    this.interval = 0;
+                    this.prev = "";
+                    this.emoji = false;
+                    this.emojiStartingCodePoint = 128512;
+                    this.emojiCurrentCodePoint = 128512;
+                    this.cancelkeypress = false;
+                    this.customOnBackspace = function(i) {};
+                    this.customOnEnter = function() {};
+                    this.customOnSpace = function() {
+                        return false
+                    };
+                    this.customOnKey = function(i) {
+                        return false
+                    };
+                    this.customOnEsc = function() {};
+                    this.customDrawKeyboard = function(i) {
+                        return i
+                    };
+                    this.textbox = document.getElementById(I);
+                    this.textbox.style.fontSize = "18px";
+                    if (a.util.mobile) {
+                        this.textbox.readOnly = true
+                    }
+                    var H = ['<div id="branah-keyboard">'];
+                    H.push('<div id="branah-keyboard-alpha">');
+                    if (a.util.windowWidth() < 640) {
+                        for (var G = 13; G < 23; G++) {
+                        }
+                        for (var G = 26; G < 35; G++) {
+                        }
+                        for (var G = 37; G < 44; G++) {
+                        }
+                        for (var G = 0; G < 13; G++) {
+                        }
+                        for (var G = 23; G < 26; G++) {
+                        }
+                        for (var G = 35; G < 37; G++) {
+                        }
+                        for (var G = 44; G < 48; G++) {
+                        }
+                    } else {
+                        for (var G = 0; G < 13; G++) {
+                        }
+                        for (var G = 13; G < 25; G++) {
+                            H.push('<button id="branah-k', G, '" class="branah-key"></button>')
+                            //1 line
+                        }
+                        H.push('<div class="branah-clear"></div>');
+                        H.push('<button id="branah-caps-lock"><span></span></button>');
+                        for (var G = 26; G < 37; G++) {
+                            H.push('<button id="branah-k', G, '" class="branah-key"></button>')
+                            //2n line
+                        }
+                        H.push('<div class="branah-clear"></div>');
+                        H.push('<utton id="branah-left-shift"><span></span></button>');
+                        for (var G = 37; G < 47; G++) {
+                            H.push('<button id="branah-k', G, '" class="branah-key"></button>')
+                            //3 line
+                        }
+                        H.push('<utton id="branah-right-shift"><span></span></button>');
+                        H.push('<utton id="branah-left-ctrl"><span></span></button>');
+                        H.push('<utton id="branah-left-alt"><span></span></button>');
+                        H.push('<utton id="branah-right-alt"><span></span></button>');
+                        H.push('<utton id="branah-right-ctrl"><span></span></button>');
+                    }
+                    H.push('<div id="branah-keyboard-emoji" style="display:none">');
+                    document.getElementById(e).innerHTML = H.join("");
+                    this.wireEvents();
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.loadDefaultLayout = function(e) {
+                    this.defaultLayout.load(e);
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.loadVirtualLayout = function(e) {
+                    this.virtualLayout.load(e);
+                    this.drawKeyboard();
+                    this.textbox.style.direction = this.attr("dir")
+                };
+                a.keyboard.prototype.switchLayout = function() {
+                    this.currentLayout = (this.currentLayout === this.defaultLayout) ? this.virtualLayout : this.defaultLayout;
+                    this.reset();
+                    this.drawKeyboard();
+                    this.textbox.style.direction = this.attr("dir")
+                };
+                a.keyboard.prototype.getFontSize = function() {
+                    return this.fontSize
+                };
+                a.keyboard.prototype.setFontSize = function(e) {
+                    this.fontSize = e;
+                    this.textbox.style.fontSize = this.fontSize + "px"
+                };
+                a.keyboard.prototype.onEsc = function() {
+                    this.switchLayout();
+                    this.customOnEsc()
+                };
+                a.keyboard.prototype.onShift = function() {
+                    this.shift = !this.shift;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onAlt = function() {
+                    this.alt = !this.alt;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onAltGr = function() {
+                    this.altGr = !this.altGr;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onCtrl = function() {
+                    this.ctrl = !this.ctrl;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onCapsLock = function() {
+                    this.caps = !this.caps;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onBackspace = function() {
+                    if (this.prev != "") {
+                        this.prev = "";
+                        this.shift = false;
+                        this.drawKeyboard()
+                    } else {
+                        var i = a.util.deleteAtCaret(this.textbox, 1, 0);
+                        if (i.length > 0) {
+                            var e = i.charCodeAt(0);
+                            if (e < 57344 && 56319 < e) {
+                                i = a.util.deleteAtCaret(this.textbox, 1, 0) + i
+                            }
+                        }
+                        this.customOnBackspace(i)
+                    }
+                };
+                a.keyboard.prototype.onEnter = function() {
+                    a.util.insertAtCaret(this.textbox, "\u000A");
+                    this.customOnEnter()
+                };
+                a.keyboard.prototype.onSpace = function() {
+                    if (!this.customOnSpace()) {
+                        a.util.insertAtCaret(this.textbox, "\u0020")
+                    }
+                };
+                a.keyboard.prototype.onEmoji = function() {
+                    this.emoji = !this.emoji;
+                    this.emojiCurrentCodePoint = this.emojiStartingCodePoint;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onEmojiScrollUp = function() {
+                    this.emojiCurrentCodePoint -= 14;
+                    if (this.emojiCurrentCodePoint < 0) {
+                        this.emojiCurrentCodePoint = 0
+                    }
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onEmojiScrollDown = function() {
+                    this.emojiCurrentCodePoint += 14;
+                    this.drawKeyboard()
+                };
+                a.keyboard.prototype.onEmojiKey = function(e) {
+                    a.util.insertAtCaret(this.textbox, a.util.fromCharCodeS(this.emojiCurrentCodePoint + parseInt(e) - 100))
+                };
+                a.keyboard.prototype.attr = function(e) {
+                    if (e == "dir") {
+                        return this.currentLayout.dir
+                    } else {
+                        if (e == "lang") {
+                            return this.currentLayout.lang
+                        } else {
+                            if (e == "name") {
+                                return this.currentLayout.name
+                            }
+                        }
+                    }
+                    return ""
+                };
+                a.keyboard.prototype.reset = function() {
+                    this.shift = false;
+                    this.caps = false;
+                    this.alt = false;
+                    this.altGr = false;
+                    this.ctrl = false;
+                    this.counter = 0;
+                    this.interval = 0;
+                    this.prev = ""
+                };
+                a.keyboard.prototype.stopRepeat = function() {
+                    if (this.interval != 0) {
+                        clearInterval(this.interval);
+                        this.counter = 0;
+                        this.interval = 0
+                    }
+                };
+                a.keyboard.prototype.onKey = function(i) {
+                    var e = a.layout.parser.getKey(this.currentLayout.keys, i);
+                    if (e) {
+                        var H = a.layout.parser.getState(this.ctrl, this.alt, this.shift, this.caps, e.c ? e.c : "0", this.altGr);
+                        var I = e[H] ? e[H] : "";
+                        if (this.prev != "") {
+                            var G = a.layout.parser.getMappedValue(this.currentLayout.deadkeys, I, this.prev);
+                            if (G != "") {
+                                a.util.insertAtCaret(this.textbox, G)
+                            }
+                            this.prev = ""
+                        } else {
+                            if (a.layout.parser.isDeadkey(this.currentLayout.deadkeys, I)) {
+                                this.prev = I
+                            } else {
+                                if (I != "") {
+                                    if (!this.customOnKey(I)) {
+                                        a.util.insertAtCaret(this.textbox, I)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                a.keyboard.prototype.getEmojiHTML = function() {
+                    var H = 14;
+                    if (a.util.windowWidth() < 640) {
+                        H = 6
+                    }
+                    var I = [];
+                    for (var e = 100; e < 100 + (5 * H); e++) {
+                        var G = e - 99;
+                        if (G == H) {
+                        } else {
+                            if (G == 2 * H) {
+                            } else {
+                                if (G == 3 * H) {
+                                    if (G == 4 * H) {
+                                    } else {
+                                        if (G == 5 * H) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return I.join("")
+                };
+                a.keyboard.prototype.drawKeyboard = function() {
+                    if (this.emoji) {
+                        document.getElementById("branah-keyboard-emoji").innerHTML = this.getEmojiHTML();
+                        document.getElementById("branah-keyboard-emoji").style.display = "";
+                        document.getElementById("branah-keyboard-alpha").style.display = "none";
+                        return
+                    } else {
+                        document.getElementById("branah-keyboard-emoji").style.display = "none";
+                        document.getElementById("branah-keyboard-alpha").style.display = ""
+                    }
+                    if (!this.currentLayout.keys) {
+                        return
+                    }
+                    var R, T, W, X;
+                    var U = this.currentLayout.keys.length;
+                    for (var S = 0; S < U; S++) {
+                        T = this.currentLayout.keys[S];
+                        if (!document.getElementById("branah-" + T.i)) {
+                            continue
+                        }
+                        var Q = this.ctrl;
+                        var e = this.alt;
+                        var V = this.shift;
+                        var P = this.caps;
+                        var G = this.altGr;
+                        if (this.shiftOn) {
+                            V = true
+                        }
+                        if (this.capsOn) {
+                            P = true
+                        }
+                        if (this.altCtrlOn) {
+                            Q = true;
+                            e = true
+                        }
+                        if (this.altGrOn) {
+                            G = true
+                        }
+                        W = a.layout.parser.getState(Q, e, V, P, T.c ? T.c : "0", G);
+                        X = T[W] ? T[W] : "";
+                        if (this.prev != "") {
+                            X = a.layout.parser.getMappedValue(this.currentLayout.deadkeys, X, this.prev)
+                        }
+                        R = [];
+                        R.push('<div class="branah-label-reference">', a.layout.parser.getKeyLegend(this.defaultLayout.keys, T.i), "</div>");
+                        if (!V) {
+                            X = this.customDrawKeyboard(X);
+                            if (X == "") {
+                                X = "&nbsp;"
+                            }
+                            R.push('<div class="branah-label-natural" style="font-size:', this.fontSize, 'px;">&nbsp;', X, "</div>")
+                        } else {
+                            if (X == "") {
+                                X = "&nbsp;"
+                            }
+                        }
+                        document.getElementById("branah-" + T.i).innerHTML = R.join("")
+                    }
+                    var K = document.getElementById("branah-left-ctrl");
+                    var N = document.getElementById("branah-right-ctrl");
+                    if (K && N) {
+                        if (Q) {
+                            K.className = "branah-recessed" + (this.ctrl ? "" : "-hover");
+                            N.className = "branah-recessed" + (this.ctrl ? "" : "-hover")
+                        } else {
+                            K.className = "";
+                            N.className = ""
+                        }
+                    }
+                    var J = document.getElementById("branah-left-alt");
+                    if (J) {
+                        if (e) {
+                            J.className = "branah-recessed" + (this.alt ? "" : "-hover")
+                        } else {
+                            J.className = ""
+                        }
+                    }
+                    var M = document.getElementById("branah-right-alt");
+                    if (M) {
+                        if (G) {
+                            M.className = "branah-recessed" + (this.altGr ? "" : "-hover")
+                        } else {
+                            M.className = ""
+                        }
+                    }
+                    var L = document.getElementById("branah-left-shift");
+                    var O = document.getElementById("branah-right-shift");
+                    if (L && O) {
+                        if (V) {
+                            L.className = "branah-recessed" + (this.shift ? "" : "-hover");
+                            O.className = "branah-recessed" + (this.shift ? "" : "-hover")
+                        } else {
+                            L.className = "";
+                            O.className = ""
+                        }
+                    }
+                    var H = document.getElementById("branah-caps-lock");
+                    if (H) {
+                        if (P) {
+                            H.className = "branah-recessed" + (this.caps ? "" : "-hover")
+                        } else {
+                            H.className = ""
+                        }
+                    }
+                    var I = document.getElementById("branah-escape");
+                    if (I) {
+                        if (this.currentLayout === this.defaultLayout) {
+                            I.className = "branah-recessed"
+                        } else {
+                            I.className = ""
+                        }
+                    }
+                };
+                a.keyboard.prototype.wireEvents = function() {
+                    var e = this;
+                    document.getElementById("branah-keyboard").onmousedown = function(i) {
+                        var G = a.util.srcId(i, this, "button");
+                        if (!G) {
+                            return
+                        }
+                        e.interval = setInterval(function() {
+                            e.counter++;
+                            if (e.counter > 5) {
+                                switch (G) {
+                                    case "branah-backspace":
+                                    case "branah-emoji-backspace":
+                                        e.onBackspace();
+                                        break;
+                                    case "branah-enter":
+                                    case "branah-emoji-enter":
+                                        e.onEnter();
+                                        break;
+                                    case "branah-emoji-scrollup":
+                                        e.onEmojiScrollUp();
+                                        break;
+                                    case "branah-emoji-scrolldown":
+                                        e.onEmojiScrollDown();
+                                        break;
+                                    default:
+                                        if (G.search("^branah-k([0-9]|[1-3][0-9]|4[0-7])$") != -1) {
+                                            e.onKey(G.substr(7));
+                                            e.shift = false;
+                                            e.alt = false;
+                                            e.ctrl = false;
+                                            e.altGr = false;
+                                            e.drawKeyboard()
+                                        } else {
+                                            if (G.search("^branah-k1[0-6][0-9]$") != -1) {
+                                                e.onEmojiKey(G.substr(8))
+                                            }
+                                        }
+                                        break
+                                }
+                            }
+                        }, 50)
+                    };
+                    document.getElementById("branah-keyboard").onmouseup = function(i) {
+                        e.stopRepeat()
+                    };
+                    document.getElementById("branah-keyboard").onmouseout = function(i) {
+                        e.stopRepeat()
+                    };
+                    document.getElementById("branah-keyboard").onclick = function(i) {
+                        var G = a.util.srcId(i, this, "button");
+                        if (!G) {
+                            return
+                        }
+                        switch (G) {
+                            case "branah-left-shift":
+                            case "branah-right-shift":
+                                e.onShift();
+                                break;
+                            case "branah-left-alt":
+                                e.onCtrl();
+                                e.onAlt();
+                                break;
+                            case "branah-right-alt":
+                                e.onAltGr();
+                                break;
+                            case "branah-left-ctrl":
+                            case "branah-right-ctrl":
+                                e.onAlt();
+                                e.onCtrl();
+                                break;
+                            case "branah-escape":
+                                e.onEsc();
+                                break;
+                            case "branah-caps-lock":
+                                e.onCapsLock();
+                                break;
+                            case "branah-backspace":
+                            case "branah-emoji-backspace":
+                                e.onBackspace();
+                                break;
+                            case "branah-enter":
+                            case "branah-emoji-enter":
+                                e.onEnter();
+                                break;
+                            case "branah-space":
+                                e.onSpace();
+                                break;
+                            case "branah":
+                            case "branah-emoji":
+                                e.onEmoji();
+                                break;
+                            case "branah-emoji-scrollup":
+                                e.onEmojiScrollUp();
+                                break;
+                            case "branah-emoji-scrolldown":
+                                e.onEmojiScrollDown();
+                                break;
+                            default:
+                                if (G.search("^branah-k([0-9]|[1-3][0-9]|4[0-7])$") != -1) {
+                                    e.onKey(G.substr(7));
+                                    e.shift = false;
+                                    e.alt = false;
+                                    e.ctrl = false;
+                                    e.altGr = false;
+                                    e.drawKeyboard()
+                                } else {
+                                    if (G.search("^branah-k1[0-6][0-9]$") != -1) {
+                                        e.onEmojiKey(G.substr(8))
+                                    }
+                                }
+                                break
+                        }
+                    };
+                    if (!("ontouchstart" in document.documentElement) || !a.util.mobile) {
+                        document.getElementById("branah-left-shift").onmouseover = function(i) {
+                            e.shiftOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-shift").onmouseover = function(i) {
+                            e.shiftOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-left-shift").onmouseout = function(i) {
+                            e.shiftOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-shift").onmouseout = function(i) {
+                            e.shiftOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-left-ctrl").onmouseover = function(i) {
+                            e.altCtrlOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-ctrl").onmouseover = function(i) {
+                            e.altCtrlOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-left-ctrl").onmouseout = function(i) {
+                            e.altCtrlOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-ctrl").onmouseout = function(i) {
+                            e.altCtrlOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-left-alt").onmouseover = function(i) {
+                            e.altCtrlOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-alt").onmouseover = function(i) {
+                            e.altGrOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-left-alt").onmouseout = function(i) {
+                            e.altCtrlOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-right-alt").onmouseout = function(i) {
+                            e.altGrOn = false;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-caps-lock").onmouseover = function(i) {
+                            e.capsOn = true;
+                            e.drawKeyboard()
+                        };
+                        document.getElementById("branah-caps-lock").onmouseout = function(i) {
+                            e.capsOn = false;
+                            e.drawKeyboard()
+                        }
+                    }
+                    e.textbox.onkeydown = function(G) {
+                        var i = a.util.code(G);
+                        if (i == "Unidentified") {
+                            var I = a.util.keyCode(G);
+                            i = a.layout.parser.keys[I + ""]
+                        }
+                        if ((i == "KeyA" || i == "KeyY" || i == "KeyZ" || i == "KeyC" || i == "KeyV" || i == "KeyX") && (e.ctrl && !e.alt && !e.shift)) {
+                            return
+                        }
+                        if (e.currentLayout == e.defaultLayout && i != "Escape") {
+                            return
+                        }
+                        switch (i) {
+                            case "ControlLeft":
+                            case "ControlRight":
+                                e.ctrl = false;
+                                e.onCtrl();
+                                break;
+                            case "AltLeft":
+                                e.alt = false;
+                                e.onAlt();
+                                break;
+                            case "AltRight":
+                                e.altGr = false;
+                                e.onAltGr();
+                                break;
+                            case "ShiftLeft":
+                            case "ShiftRight":
+                                e.shift = false;
+                                e.onShift();
+                                break;
+                            case "Escape":
+                                e.onEsc();
+                                break;
+                            case "CapsLock":
+                                if (G.getModifierState && G.getModifierState("CapsLock")) {
+                                    e.caps = false
+                                }
+                                e.onCapsLock();
+                                break;
+                            case "Backspace":
+                                e.onBackspace();
+                                a.util.preventDefault(G);
+                                break;
+                            case "Space":
+                                e.onSpace();
+                                a.util.preventDefault(G);
+                                break;
+                            case "Enter":
+                                e.onEnter();
+                                a.util.preventDefault(G);
+                                break;
+                            default:
+                                var H = a.layout.parser.codes[i];
+                                if (H != undefined) {
+                                    e.onKey("k" + H);
+                                    e.drawKeyboard();
+                                    a.util.preventDefault(G);
+                                    e.cancelkeypress = true
+                                }
+                                break
+                        }
+                    };
+                    if (a.util.opera) {
+                        e.textbox.onkeypress = function(i) {
+                            if (e.cancelkeypress) {
+                                a.util.preventDefault(i);
+                                e.cancelkeypress = false
+                            }
+                        }
+                    }
+                    e.textbox.onkeyup = function(G) {
+                        var i = a.util.code(G);
+                        if (i == "Unidentified") {
+                            var H = a.util.keyCode(G);
+                            i = a.layout.parser.keys[H + ""]
+                        }
+                        switch (i) {
+                            case "ControlLeft":
+                            case "ControlRight":
+                                e.ctrl = true;
+                                e.onCtrl();
+                                break;
+                            case "AltLeft":
+                                e.alt = true;
+                                e.onAlt();
+                                break;
+                            case "AltRight":
+                                e.altGr = true;
+                                e.onAltGr();
+                                break;
+                            case "ShiftLeft":
+                            case "ShiftRight":
+                                e.shift = true;
+                                e.onShift();
+                                break;
+                            default:
+                        }
+                    }
+                };
+                var y = false;
+                try {
+                    var m = "item";
+                    localStorage.setItem(m, m);
+                    localStorage.removeItem(m);
+                    y = true
+                } catch (g) {}
+                var n = false;
+                try {
+                    var A = JSON.parse(JSON.stringify({
+                        item: "item"
+                    }));
+                    if (A.item == "item") {
+                        n = true
+                    }
+                } catch (g) {}
+                var o = null;
+                var x = {
+                    undo: [],
+                    redo: [],
+                    layout: null,
+                    fontSize: 20
+                };
+                var E = "korean";
+                o = new a.keyboard("keyboard", "editor");
+                var D = o.textbox;
+                D.focus();
+                var F = "https://apis.branah.com";
+                cors = function(I, J, e, i, H, G, M) {
+                    if (typeof XMLHttpRequest !== "undefined" && "withCredentials" in new XMLHttpRequest()) {
+                        var L = new XMLHttpRequest();
+                        L.open(I, J, true);
+                        if (e != null) {
+                            L.setRequestHeader("Content-Type", e)
+                        }
+                        L.onreadystatechange = function() {
+                            if (L.readyState === 4) {
+                                if (L.status === 200) {
+                                    if (M) {
+                                        H(L.responseXML)
+                                    } else {
+                                        H(L.responseText)
+                                    }
+                                } else {
+                                    if (L.responseText != "") {
+                                        G(L.responseText)
+                                    } else {
+                                        G(L.statusText)
+                                    }
+                                }
+                            }
+                        };
+                        L.send(i)
+                    } else {
+                        if (typeof XDomainRequest !== "undefined") {
+                            var K = new XDomainRequest();
+                            K.open(I, J);
+                            if (e != null) {
+                                K.setRequestHeader("Content-Type", e)
+                            }
+                            K.send(i);
+                            K.onerror = G;
+                            K.onload = function() {
+                                if (M) {
+                                    H(K.responseXML)
+                                } else {
+                                    H(K.responseText)
+                                }
+                            }
+                        } else {
+                            b = false
+                        }
+                    }
+                };
+                var b = false;
+                if (typeof XMLHttpRequest !== "undefined" && "withCredentials" in new XMLHttpRequest()) {
+                    b = true
+                } else {
+                    if (typeof XDomainRequest !== "undefined") {
+                        b = true
+                    }
+                }
+                if (b == false) {
+                    var h = document.getElementById("response");
+                    h.style.backgroundColor = "#FBFFCF"
+                }
+                if (y && n) {
+                    var A = JSON.parse(localStorage.getItem(E));
+                    if (A != null) {
+                        if (A.layout) {
+                            x.layout = A.layout
+                        }
+                        if (A.undo) {
+                            x.undo = A.undo
+                        }
+                        if (A.redo) {
+                            x.redo = A.redo
+                        }
+                        if (A.fontSize) {
+                            x.fontSize = A.fontSize
+                        }
+                    }
+                }
+                if (x.fontSize) {
+                    o.setFontSize(x.fontSize)
+                }
+                var t = [{
+                    Id: "Standard",
+                    Name: "Phonetic",
+                    Json: {
+                        name: "Korean",
+                        dir: "ltr",
+                        keys: [{
+                            i: "k0",
+                            c: "0",
+                            n: "`",
+                            s: "~"
+                        }, {
+                            i: "k1",
+                            c: "0",
+                            n: "1",
+                            s: "!"
+                        }, {
+                            i: "k2",
+                            c: "0",
+                            n: "2",
+                            s: "@"
+                        }, {
+                            i: "k3",
+                            c: "0",
+                            n: "3",
+                            s: "#"
+                        }, {
+                            i: "k4",
+                            c: "0",
+                            n: "4",
+                            s: "$"
+                        }, {
+                            i: "k5",
+                            c: "0",
+                            n: "5",
+                            s: "%"
+                        }, {
+                            i: "k6",
+                            c: "0",
+                            n: "6",
+                            s: "^"
+                        }, {
+                            i: "k7",
+                            c: "0",
+                            n: "7",
+                            s: "&"
+                        }, {
+                            i: "k8",
+                            c: "0",
+                            n: "8",
+                            s: "*"
+                        }, {
+                            i: "k9",
+                            c: "0",
+                            n: "9",
+                            s: "("
+                        }, {
+                            i: "k10",
+                            c: "0",
+                            n: "0",
+                            s: ")"
+                        }, {
+                            i: "k11",
+                            c: "0",
+                            n: "-",
+                            s: "_"
+                        }, {
+                            i: "k12",
+                            c: "0",
+                            n: "=",
+                            s: "+"
+                        }, {
+                            i: "k13",
+                            c: "1",
+                            n: "ㅇ",
+                            s: ""
+                        }, {
+                            i: "k14",
+                            c: "1",
+                            n: "ㅡ",
+                            s: ""
+                        }, {
+                            i: "k15",
+                            c: "1",
+                            n: "ㅔ",
+                            s: "ㅖ"
+                        }, {
+                            i: "k16",
+                            c: "1",
+                            n: "ㄹ",
+                            s: ""
+                        }, {
+                            i: "k17",
+                            c: "1",
+                            n: "ㅌ",
+                            s:  ""
+                        }, {
+                            i: "k18",
+                            c: "1",
+                            n: "ㅐ",
+                            s: "ㅒ"
+                        }, {
+                            i: "k19",
+                            c: "1",
+                            n: "ㅜ"
+                        }, {
+                            i: "k20",
+                            c: "1",
+                            n: "ㅣ"
+                        }, {
+                            i: "k21",
+                            c: "1",
+                            n: "ㅗ",
+                            s: ""
+                        }, {
+                            i: "k22",
+                            c: "1",
+                            n: "ㅍ",
+                            s: ""
+                        }, {
+                            i: "k23",
+                            c: "0",
+                            n: "[",
+                            s: "{"
+                        }, {
+                            i: "k24",
+                            c: "0",
+                            n: "]",
+                            s: "}"
+                        }, {
+                            i: "k25",
+                            c: "0",
+                            n: "\\",
+                            s: "|"
+                        }, {
+                            i: "k26",
+                            c: "1",
+                            n: "ㅏ"
+                        }, {
+                            i: "k27",
+                            c: "1",
+                            n: "ㅅ",
+                            s: "ㅆ"
+                        }, {
+                            i: "k28",
+                            c: "1",
+                            n: "ㄷ",
+                            s: "ㄸ"
+                        }, {
+                            i: "k29",
+                            c: "1",
+                            n: "ㅑ"
+                        }, {
+                            i: "k30",
+                            c: "1",
+                            n: "ㄱ",
+                            s: "ㄲ"
+                        }, {
+                            i: "k31",
+                            c: "1",
+                            n: "ㅎ"
+                        }, {
+                            i: "k32",
+                            c: "1",
+                            n: "ㅈ",
+                            s: "ㅉ"
+                        }, {
+                            i: "k33",
+                            c: "1",
+                            n: "ㅋ"
+                        }, {
+                            i: "k34",
+                            c: "1",
+                            n: "ㅛ"
+                        }, {
+                            i: "k35",
+                            c: "0",
+                            n: ";",
+                            s: ":"
+                        }, {
+                            i: "k36",
+                            c: "0",
+                            n: "'",
+                            s: '"'
+                        }, {
+                            i: "k37",
+                            c: "1",
+                            n: "ㅕ"
+                        }, {
+                            i: "k38",
+                            c: "1",
+                            n: "ㅠ"
+                        }, {
+                            i: "k39",
+                            c: "1",
+                            n: "ㅊ"
+                        }, {
+                            i: "k40",
+                            c: "1",
+                            n: "ㅓ"
+                        }, {
+                            i: "k41",
+                            c: "1",
+                            n: "ㅂ",
+                            s: "ㅃ" 
+                        }, {
+                            i: "k42",
+                            c: "1",
+                            n: "ㄴ"
+                        }, {
+                            i: "k43",
+                            c: "1",
+                            n: "ㅁ"
+                        }, {
+                            i: "k44",
+                            c: "0",
+                            n: ",",
+                            s: "<"
+                        }, {
+                            i: "k45",
+                            c: "0",
+                            n: ".",
+                            s: ">"
+                        }, {
+                            i: "k46",
+                            c: "0",
+                            n: "/",
+                            s: "?"
+                        }, {
+                            i: "k47",
+                            c: "0",
+                            n: "\\",
+                            s: "|"
+                        }],
+                        deadkeys: []
+                
+                        
+                    }
+                }];
+                if (t.length == 1) {
+                    o.loadVirtualLayout(t[0].Json)
+                } else {
+                    var r = [];
+                    var u = [];
+                    if (!x.layout) {
+                        x.layout = t[0].Id
+                    }
+                    var v = false;
+                    for (var l = 0; l < t.length; l++) {
+                        r.push("", (l > 0 ? ' ' : ""), '<input id="', t[l].Id, '" = =', (x.layout == t[l].Id ? ' ' : ""), " ", t[l].Name, "</>");
+                        u[l] = new a.layout();
+                        u[l].load(t[l].Json);
+                        if (x.layout == t[l].Id) {
+                            o.loadVirtualLayout(t[l].Json);
+                            v = true
+                        }
+                    }
+                    if (v == false) {
+                        o.loadVirtualLayout(t[0].Json)
+                    }
+                    var s = document.createElement("p");
+                    s.innerHTML = r.join("");
+                    document.getElementById("keyboard").appendChild(s);
+                    for (var l = 0; l < t.length; l++) {
+                        var C = function(e, i) {
+                            document.getElementById(e).onclick = function() {
+                                if (x.layout != e) {
+                                    o.virtualLayout = i;
+                                    o.currentLayout = o.virtualLayout;
+                                    o.reset();
+                                    o.drawKeyboard();
+                                    o.textbox.style.direction = i.dir;
+                                    x.layout = e;
+                                    if (y && n) {
+                                        localStorage.setItem(E, JSON.stringify(x))
+                                    }
+                                }
+                                w(l);
+                                o.textbox.focus()
+                            }
+                        }(t[l].Id, u[l])
+                    }
+                }
+                String.prototype.lengthS = function() {
+                    var K = this.length;
+                    var G = 0;
+                    var J;
+                    var e = 0;
+                    for (var I = 0; I < K; I++) {
+                        J = this.charCodeAt(I);
+                        if (G < 56320 && 55295 < G && J < 57344 && 56319 < J) {
+                            J = 0;
+                            e++
+                        }
+                        G = J
+                    }
+                    return (K - e)
+                };
+                String.prototype.charCodeAtS = function(J) {
+                    var M = this.length;
+                    var G = 0;
+                    var K;
+                    var e = 0;
+                    for (var I = 0; I < M; I++) {
+                        K = this.charCodeAt(I);
+                        if (G < 56320 && 55295 < G && K < 57344 && 56319 < K) {
+                            K = 0;
+                            e++
+                        }
+                        G = K;
+                        if ((I - e) == J) {
+                            I++;
+                            K = 0;
+                            if (I < M) {
+                                K = this.charCodeAt(I)
+                            }
+                            if (G < 56320 && 55295 < G && K < 57344 && 56319 < K) {
+                                return ((G - 55296) * 1024) + (K - 56320) + 65536
+                            }
+                            return G
+                        }
+                    }
+                    return NaN
+                };
+                String.fromCharCodeS = function() {
+                    var J = arguments.length;
+                    var K = "";
+                    var e, I, M;
+                    for (var G = 0; G < J; G++) {
+                        M = arguments[G];
+                        if (M < 1114112 && 65535 < M) {
+                            e = Math.floor((M - 65536) / 1024) + 55296;
+                            I = ((M - 65536) % 1024) + 56320;
+                            K = K + String.fromCharCode(e, I)
+                        } else {
+                            if (M < 65536) {
+                                K = K + String.fromCharCode(M)
+                            }
+                        }
+                    }
+                    return K
+                };
+                String.prototype.charAtS = function(e) {
+                    return String.fromCharCodeS(this.charCodeAtS(e))
+                };
+                var j = {
+                    IME: null,
+                    suggestion: "",
+                    buffer: "",
+                    suggestionIndex: 0,
+                    suggestionCount: 6,
+                    indexArray: [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 32],
+                    bgNodes: null,
+                    tagMapper: {},
+                    loadIME: function(e) {
+                        this.IME = e.documentElement;
+                        this.bgNodes = this.IME.getElementsByTagName("bg");
+                        this.suggestion = "";
+                        this.buffer = "";
+                        this.suggestionIndex = 0;
+                        this.suggestionCount = this.IME.getAttribute("numbers");
+                        if (!this.suggestionCount || this.suggestionCount == "") {
+                            this.suggestionCount = 10
+                        }
+                    },
+                    reset: function() {
+                        this.suggestion = "";
+                        this.buffer = "";
+                        this.suggestionIndex = 0
+                    },
+                    moveToNextSuggestion: function() {
+                        if (this.suggestionCount * (this.suggestionIndex + 1) < this.suggestion.lengthS()) {
+                            this.suggestionIndex++;
+                            return true
+                        }
+                        return false
+                    },
+                    moveToPrevSuggestion: function() {
+                        if (this.suggestionIndex > 0) {
+                            this.suggestionIndex--;
+                            return true
+                        }
+                        return false
+                    },
+                    getLabelFromSuggestion: function(i) {
+                        if (this.suggestion.length == 0 || i.length == 0) {
+                            return i
+                        }
+                        var e = a.util.indexOf(this.indexArray, i.charCodeAt(0));
+                        e -= (10 - this.suggestionCount);
+                        if (e > -1 && (this.suggestionCount * this.suggestionIndex) + e < this.suggestion.lengthS()) {
+                            return this.suggestion.charAtS((this.suggestionCount * this.suggestionIndex) + e)
+                        }
+                        return i
+                    },
+                    getSuggestions: function() {
+                        var G = this.buffer.length;
+                        var H = this.IME;
+                        var I;
+                        for (var e = 0; e < G; e++) {
+                            I = this.buffer.charAt(e);
+                            I = I.replace("1", "aa");
+                            I = I.replace("2", "bb");
+                            I = I.replace("3", "cc");
+                            I = I.replace("4", "dd");
+                            I = I.replace("5", "ee");
+                            I = I.replace("6", "ff");
+                            H = this.findNode(H.childNodes, I);
+                            if (!H) {
+                                H = this.IME
+                            }
+                        }
+                        if (H != this.IME) {
+                            return H.getAttribute("v")
+                        }
+                        return ""
+                    },
+                    onBackspace: function() {
+                        if (this.buffer.length < 2) {
+                            this.reset()
+                        } else {
+                            this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+                            this.suggestion = this.getSuggestions();
+                            this.suggestionIndex = 0
+                        }
+                    },
+                    bigramSuggestion: function(G) {
+                        for (var e = 0; e < this.bgNodes.length; e++) {
+                            if (bgNodes[e].getAttribute("k") == G) {
+                                this.suggestion = this.bgNodes[e].getAttribute("v")
+                            }
+                        }
+                    },
+                    composeHan: function(I) {
+                        var e = I.charCodeAt(I.length - 1);
+                        var i = a.util.indexOf(this.indexArray, e);
+                        i -= (10 - this.suggestionCount);
+                        
+                        if (e == 32) {
+                            i = 0
+                        }
+                        var H = String.fromCharCode(e);
+                        if (this.tagMapper[e] != undefined) {
+                            H = this.tagMapper[e]
+                        } else {
+                            if (e == 252) {
+                                H = "v"
+                            } else {
+                                if (i > -1 && (this.suggestionCount * this.suggestionIndex) + i < this.suggestion.lengthS()) {
+                                    var G = this.suggestion.charAtS((this.suggestionCount * this.suggestionIndex) + i);
+                                    this.reset();
+                                    this.bigramSuggestion(G);
+                                    return G
+                                }
+                            }
+                        }
+                        this.buffer += H;
+                        this.suggestion = this.getSuggestions();
+                        if (this.suggestion.length == 0 && this.buffer.length == 1) {
+                            this.buffer = ""
+                        }
+                        this.suggestionIndex = 0;
+                        return I
+                    },
+                    findNode: function(G, H) {
+                        var e = G.length;
+                        var i;
+                        for (l = 0; l < e; l++) {
+                            i = G[l];
+                            if (i.tagName == H) {
+                                return i
+                            }
+                        }
+                        return null
+                    }
+                };
+                var k = null;
+
+                function w(e) {
+                    var i = "/xml/koreanyale.xml";
+                    if (k == null) {
+                        cors("GET", i, null, null, function(G) {
+                            k = G;
+                            j.loadIME(G);
+                            D.focus()
+                        }, function(G) {}, true)
+                    } else {
+                        j.loadIME(k);
+                        D.focus()
+                    }
+                }
+                if (x.layout == "") {
+                    w(2)
+                }
+                o.customOnKey = function(i) {
+                    switch (x.layout) {
+                        case "han ja":
+                            if (i == "\u25b8" && j.suggestion.length > 0) {
+                                j.moveToNextSuggestion()
+                            } else {
+                                if (i == "\u25c2" && j.suggestion.length > 0) {
+                                    j.moveToPrevSuggestion()
+                                } else {
+                                    a.util.insertAtCaret(this.textbox, i);
+                                    var e = a.util.deleteAtCaret(this.textbox, j.buffer.length + i.length, 0);
+                                    a.util.insertAtCaret(this.textbox, j.composeHan(e))
+                                }
+                            }
+                            break;
+                        case "translite rate":
+                            a.util.insertAtCaret(this.textbox, i);
+                            var e = a.util.deleteAtCaret(this.textbox, 2, 0);
+                            a.util.insertAtCaret(this.textbox, transliterate.compose(e));
+                            e = a.util.deleteAtCaret(this.textbox, 2, 0);
+                            a.util.insertAtCaret(this.textbox, q.composeHangul(e));
+                            break;
+                        default:
+                            a.util.insertAtCaret(this.textbox, i);
+                            var e = a.util.deleteAtCaret(this.textbox, 2, 0);
+                            a.util.insertAtCaret(this.textbox, q.composeHangul(e));
+                            break
+                    }
+                    return true
+                };
+                o.customOnBackspace = function(e) {
+                    if (x.layout != "ha nja") {
+                        e = q.decomposeHangul(e);
+                        if (e.length > 1) {
+                            a.util.insertAtCaret(this.textbox, q.composeHangul(e.slice(0, -1)))
+                        }
+                    } else {
+                        j.onBackspace();
+                        this.drawKeyboard()
+                    }
+                };
+                o.customOnSpace = function() {
+                    if (x.layout != "han ja") {
+                        return false
+                    } else {
+                        a.util.insertAtCaret(this.textbox, "\u0020");
+                        var e = a.util.deleteAtCaret(this.textbox, j.buffer.length + 1, 0);
+                        a.util.insertAtCaret(this.textbox, j.composeHan(e));
+                        this.drawKeyboard();
+                        return true
+                    }
+                };
+                o.customDrawKeyboard = function(e) {
+                    if (x.layout != "han ja") {
+                        return e
+                    } else {
+                        return j.getLabelFromSuggestion(e)
+                    }
+                };
+                a.util.indexOf = function(e, I) {
+                    var H = e.length;
+                    for (var G = 0; G < H; G++) {
+                        if (e[G] == I) {
+                            return G
+                        }
+                    }
+                    return -1
+                };
+                var q = {
+                    initial: [12593, 12594, 12596, 12599, 12600, 12601, 12609, 12610, 12611, 12613, 12614, 12615, 12616, 12617, 12618, 12619, 12620, 12621, 12622],
+                    finale: [0, 12593, 12594, 12595, 12596, 12597, 12598, 12599, 12601, 12602, 12603, 12604, 12605, 12606, 12607, 12608, 12609, 12610, 12612, 12613, 12614, 12615, 12616, 12618, 12619, 12620, 12621, 12622],
+                    dMedial: [0, 0, 0, 0, 0, 0, 0, 0, 0, 800, 801, 820, 0, 0, 1304, 1305, 1320, 0, 0, 1820],
+                    dFinale: [0, 0, 0, 119, 0, 422, 427, 0, 0, 801, 816, 817, 819, 825, 826, 827, 0, 0, 1719, 0, 1919],
+                    SBase: 44032,
+                    LBase: 4352,
+                    VBase: 12623,
+                    TBase: 4519,
+                    LCount: 19,
+                    VCount: 21,
+                    TCount: 28,
+                    NCount: 588,
+                    SCount: 11172,
+                    composeHangul: function(O) {
+                        var K = O.length;
+                        if (K == 0) {
+                            return ""
+                        }
+                        var J = O.charCodeAt(0);
+                        var M = String.fromCharCode(J);
+                        var e, L, Q, H, P, G, N;
+                        for (var I = 1; I < K; ++I) {
+                            e = O.charCodeAt(I);
+                            L = a.util.indexOf(this.initial, J);
+                            if (L != -1) {
+                                Q = e - this.VBase;
+                                if (0 <= Q && Q < this.VCount) {
+                                    J = this.SBase + (L * this.VCount + Q) * this.TCount;
+                                    M = M.slice(0, M.length - 1) + String.fromCharCode(J);
+                                    continue
+                                }
+                            }
+                            N = J - this.SBase;
+                            if (0 <= N && N < 11145 && (N % this.TCount) == 0) {
+                                P = a.util.indexOf(this.finale, e);
+                                if (P != -1) {
+                                    J += P;
+                                    M = M.slice(0, M.length - 1) + String.fromCharCode(J);
+                                    continue
+                                }
+                                Q = (N % this.NCount) / this.TCount;
+                                H = a.util.indexOf(this.dMedial, (Q * 100) + (e - this.VBase));
+                                if (H > 0) {
+                                    J += (H - Q) * this.TCount;
+                                    M = M.slice(0, M.length - 1) + String.fromCharCode(J);
+                                    continue
+                                }
+                            }
+                            if (0 <= N && N < 11172 && (N % this.TCount) != 0) {
+                                P = N % this.TCount;
+                                Q = e - this.VBase;
+                                if (0 <= Q && Q < this.VCount) {
+                                    L = a.util.indexOf(this.initial, this.finale[P]);
+                                    if (0 <= L && L < this.LCount) {
+                                        M = M.slice(0, M.length - 1) + String.fromCharCode(J - P);
+                                        J = this.SBase + (L * this.VCount + Q) * this.TCount;
+                                        M = M + String.fromCharCode(J);
+                                        continue
+                                    }
+                                    if (P < this.dFinale.length && this.dFinale[P] != 0) {
+                                        M = M.slice(0, M.length - 1) + String.fromCharCode(J - P + Math.floor(this.dFinale[P] / 100));
+                                        J = this.SBase + (a.util.indexOf(this.initial, this.finale[(this.dFinale[P] % 100)]) * this.VCount + Q) * this.TCount;
+                                        M = M + String.fromCharCode(J);
+                                        continue
+                                    }
+                                }
+                                G = a.util.indexOf(this.dFinale, (P * 100) + a.util.indexOf(this.finale, e));
+                                if (G > 0) {
+                                    J = J + G - P;
+                                    M = M.slice(0, M.length - 1) + String.fromCharCode(J);
+                                    continue
+                                }
+                            }
+                            J = e;
+                            M = M + String.fromCharCode(e)
+                        }
+                        return M
+                    },
+                    decomposeHangul: function(M) {
+                        var I = M.length;
+                        var J = "";
+                        var e, K, H, O, N;
+                        for (var G = 0; G < I; G++) {
+                            e = M.charCodeAt(G);
+                            K = e - this.SBase;
+                            if (K < 0 || K >= this.SCount) {
+                                J = J + String.fromCharCode(e);
+                                continue
+                            }
+                            H = this.initial[Math.floor(K / this.NCount)];
+                            O = this.VBase + (K % this.NCount) / this.TCount;
+                            N = this.finale[K % this.TCount];
+                            J = J + String.fromCharCode(H, O);
+                            if (N != 0) {
+                                J = J + String.fromCharCode(N)
+                            }
+                        }
+                        return J
+                    }
+                };
+                var f = document.createElement("p");
+                f.innerHTML = '   </span >';
+                document.getElementById("keyboard").appendChild(f);
+                var p = document.getElementById("khanja");
+                var z = document.getElementById("lookup");
+                var d = document.getElementById("definition");
+                p.onchange = function() {
+                    c("kDefinition")
+                };
+                z.click = function() {
+                    c("kDefinition")
+                };
+
+                function c(G) {
+                    var I = p.value;
+                    if (I.length == 0) {
+                        return
+                    }
+                    var i = I.charAt(0);
+                    var e = I.charCodeAt(0);
+                    if (e < 56320 && 55295 < e) {
+                        i = i + I.charAt(1);
+                        e = ((e - 55296) * 1024) + (I.charCodeAt(1) - 56320) + 65536
+                    }
+                    cors("POST", F + "/lookup/read", "application/x-www-form-urlencoded", "h=" + e.toString() + "&t=" + G, function(H) {
+                        if (H == "0;0") {
+                            d.innerHTML = '<span style="color:#e0115f;font-size:' + o.getFontSize() + 'px;vertical-align:middle;">' + i + '</span> <span style="color:#e0115f">Hanja not found</span>'
+                        } else {
+                            d.innerHTML = H.replace(/0,/g, "").replace(e.toString() + ";", '<span style="color:#e0115f;font-size:' + o.getFontSize() + 'px;vertical-align:middle;">' + i + '</span> <span style="color:#057cb5">') + "</span>"
+                        }
+                        p.value = ""
+                    }, B, false)
+                }
+
+                function B() {
+                    alert("Error connecting to database.")
+                }
+                if (x.fontSize == null) {
+                    x.fontSize = o.getFontSize();
+                    if (y && n) {
+                        localStorage.setItem(E, JSON.stringify(x))
+                    }
+                }
+                document.getElementById("shrink").onclick = function() {
+                    if (x.fontSize < 14) {
+                        return
+                    }
+                    x.fontSize -= 2;
+                    o.setFontSize(x.fontSize);
+                    o.drawKeyboard();
+                    if (y && n) {
+                        localStorage.setItem(E, JSON.stringify(x))
+                    }
+                    D.focus()
+                };
+                document.getElementById("enlarge").onclick = function() {
+                    if (x.fontSize > 36) {
+                        return
+                    }
+                    x.fontSize += 2;
+                    o.setFontSize(x.fontSize);
+                    o.drawKeyboard();
+                    if (y && n) {
+                        localStorage.setItem(E, JSON.stringify(x))
+                    }
+                    D.focus()
+                };
+                document.getElementById("email").onclick = function() {
+                    this.href = "mailto: ?body=" + D.value;
+                    D.focus();
+                    return true
+                };
+                document.getElementById("selectAll").onclick = function() {
+                    a.util.setCaretPosition(D, 0, D.value.length);
+                    D.focus()
+                };
+                document.getElementById("copy").onclick = function() {
+                    a.util.setCaretPosition(D, 0, D.value.length);
+                    var e = document.execCommand("copy");
+                    if (e) {
+                        a.util.setCaretPosition(D, D.value.length, D.value.length)
+                    } else {
+                        alert("Your browser does not allow automated copy. To copy the text in the text area, you can click Select All button and right click on the selected text. Then click the Copy option.")
+                    }
+                    D.focus()
+                };
+                if (y && n) {
+                    if (x.undo.length > 0) {
+                        D.value = x.undo.pop()
+                    }
+                    document.getElementById("clearAll").onclick = function() {
+                        if (D.value.length < 10 || confirm("Are you sure you want to clear all the text?")) {
+                            x.undo = [];
+                            x.redo = [];
+                            localStorage.setItem(E, JSON.stringify(x));
+                            D.value = ""
+                        }
+                        D.focus()
+                    };
+                    document.getElementById("undo").onclick = function() {
+                        if (x.undo.length == 0) {
+                            return
+                        }
+                        var e = x.undo.pop();
+                        if (e != D.value) {
+                            x.redo.push(D.value);
+                            D.value = e
+                        } else {
+                            D.value = (x.undo.length == 0 ? "" : x.undo[x.undo.length - 1]);
+                            x.redo.push(e)
+                        }
+                        localStorage.setItem(E, JSON.stringify(x));
+                        D.focus()
+                    };
+                    document.getElementById("redo").onclick = function() {
+                        if (x.redo.length == 0) {
+                            return
+                        }
+                        var e = x.redo.pop();
+                        D.value = e;
+                        x.undo.push(e);
+                        localStorage.setItem(E, JSON.stringify(x));
+                        D.focus()
+                    };
+                    setInterval(function() {
+                        var e = D.value;
+                        if (x.undo.length == 0 && e.length == 0) {
+                            return
+                        }
+                        if (x.undo.length == 0 || e != x.undo[x.undo.length - 1]) {
+                            x.undo.push(e);
+                            localStorage.setItem(E, JSON.stringify(x))
+                        }
+                    }, 3000)
+                } else {
+                    document.getElementById("undo").style.display = "none";
+                    document.getElementById("redo").style.display = "none";
+                    document.getElementById("clearAll").style.display = "none"
+                }
+                document.getElementById("postToX").onclick = function() {
+                    document.getElementById("postToX").href = "https://x.com/intent/post?text=" + encodeURIComponent(D.value);
+                    D.focus();
+                    return true
+                };
+                document.getElementById("searchGoogle").onclick = function() {
+                    document.getElementById("searchGoogle").href = "https://www.google.com/search?ie=UTF-8&q=" + encodeURIComponent(D.value);
+                    D.focus();
+                    return true
+                };
+                document.getElementById("translateGoogle").onclick = function() {
+                    document.getElementById("translateGoogle").href = "https://translate.google.com/#view=home&op=translate&sl=ko&tl=en&text=" + encodeURIComponent(D.value);
+                    D.focus();
+                    return true
+                };
+                document.getElementById("saveAsTextFile").onsubmit = function() {
+                    document.getElementById("data").value = D.value;
+                    D.focus();
+                    return true
+                }
+            })();
+        </script>
+
+
+
+</body></html>
